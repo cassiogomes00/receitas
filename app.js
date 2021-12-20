@@ -1,10 +1,14 @@
 import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import createError from 'http-errors';
 import mongoose from 'mongoose';
+import './src/auth/passport.js';
+import loginRouter from './src/routes/login.js';
 import registerRouter from './src/routes/register.js';
-
-dotenv.config();
+import testRouter from './src/routes/test.js';
+import cors from 'cors';
 
 const PORT = process.env.PORT || 3000;
 const DB_PASSWORD = process.env.DB_PASSWORD;
@@ -16,11 +20,14 @@ mongoose.connect(
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 // app.use(cookieParser);
 
 app.use('/register', registerRouter);
+app.use('/login', loginRouter);
+app.use('/', testRouter);
 
 app.use((req, res, next) => {
   next(createError(404));
